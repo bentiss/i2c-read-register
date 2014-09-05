@@ -1,5 +1,5 @@
 CC=gcc
-ODIR=obj
+ODIR=.
 CFLAGS=-W -Wall
 LIBS=-lm
 
@@ -18,7 +18,7 @@ i2c-read-register: $(OBJ)
 .PHONY: clean
 
 clean:
-	rm -f $(ODIR)/*.o *~ core
+	rm -f $(ODIR)/*.o *~ core i2c-read-register
 
 
 #all: i2c-read-register
