@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -59,13 +60,34 @@ static int write_bus(int busfd, unsigned char *buf, int bufsize)
 	return write(busfd, buf, bufsize);
 }
 
-static int read_register(int busfd, __uint16_t reg, unsigned char *buf, int bufsize)
+static int read_register(int busfd, int client_addr, __uint16_t reg, unsigned char *buf, int bufsize)
 {
+	struct i2c_msg msgs[2];
+	struct i2c_rdwr_ioctl_data rdwr_data;
 	unsigned char reg_buf[2];
 	int ret;
 
 	reg_buf[0] = (reg >> 0) & 0xFF;
 	reg_buf[1] = (reg >> 8) & 0xFF;
+
+	msgs[0].addr = client_addr;
+	msgs[0].flags = I2C_M_TEN;
+	msgs[0].len = 2;
+	msgs[0].buf = reg_buf;
+	msgs[1].addr = client_addr;
+	msgs[1].flags = I2C_M_TEN;
+	msgs[1].flags |= I2C_M_RD;
+	msgs[1].len = bufsize;
+	msgs[1].buf = buf;
+
+	rdwr_data.msgs = msgs;
+	rdwr_data.nmsgs = 2;
+
+	ret = ioctl(busfd, I2C_RDWR, rdwr_data);
+	if (ret)
+		printf("failed calling rdwr ioct: %02xl\n", ret);
+
+	return ret;
 
 	ret = write_bus(busfd, reg_buf, 2);
 	if (ret < 0) {
@@ -174,7 +196,7 @@ int main(int argc, char **argv)
 		goto out_err;
 
 
-	size_read = read_register(busfd, reg_addr, buf, size_to_read);
+	size_read = read_register(busfd, addr, reg_addr, buf, size_to_read);
 	print_buffer(buf, size_read);
 
 	close(busfd);
