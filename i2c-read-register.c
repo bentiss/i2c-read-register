@@ -153,7 +153,7 @@ int main(int argc, char **argv)
 	if (bus < 0 || addr <= 0)
 		return usage();
 
-	if (optind < argc) {
+	if (optind < argc  && argc > 6 ) {
 		reg_addr = htoi(argv[optind++]);
 		size_to_read = atoi(argv[optind++]);
 	} else {
