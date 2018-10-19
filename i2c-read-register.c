@@ -109,8 +109,8 @@ static int usage(void)
 	printf("\n");
 	printf("where OPTION is either:\n");
 	printf("   -h or --help: print this message\n");
-	printf("   -b N or --bus=N: the bus to talk to (see i2cdetect -l) (*MANDATORY*)\n");
-	printf("   -d 0xXX or --device=0xXX: the device on the bus to talk to (*MANDATORY*)\n");
+	printf("   -b N or --bus N: the bus to talk to (see i2cdetect -l) (*MANDATORY*)\n");
+	printf("   -d 0xXX or --device 0xXX: the device on the bus to talk to (*MANDATORY*)\n");
 
 	return EXIT_FAILURE;
 }
@@ -118,7 +118,7 @@ static int usage(void)
 static const struct option long_options[] = {
 	{ "help", no_argument, NULL, 'h' },
 	{ "bus", required_argument, NULL, 'b' },
-	{ "device", no_argument, NULL, 'd' },
+	{ "device", required_argument, NULL, 'd' },
 	{ 0, },
 };
 
